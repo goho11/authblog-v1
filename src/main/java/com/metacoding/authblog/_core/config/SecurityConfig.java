@@ -1,5 +1,7 @@
 package com.metacoding.authblog._core.config;
 
+import com.metacoding.authblog.user.User;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,15 +21,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
-
-        // csrf : 임시코드. 내가 만든 데이터 검증 가능
         http.csrf(c->c.disable());
 
+        // successHandler 로그인 성공하면 지정한 행위
         http.authorizeHttpRequests(r->
                 r.requestMatchers("/s/**").authenticated().anyRequest().permitAll())
                     .formLogin(f->f.loginPage("/login-form")
                             .loginProcessingUrl("/login")
-                                .defaultSuccessUrl("/"));
+                            //.defaultSuccessUrl("/")
+                            .successHandler((request, response, authentication) -> {
+                                User user = (User) authentication.getPrincipal();
+                                HttpSession session = request.getSession();
+                                session.setAttribute("sessionUser", user);
+                                response.sendRedirect("/");
+                            }));
 
         return http.build();
     }

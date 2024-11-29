@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import java.util.Optional;
-
 // 4-2. 유저 쿼리문 테스트
 // UserRepository 만 테스트 해도 됨
 @Import(UserRepository.class)
